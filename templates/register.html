@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Register — FlaskRBAC{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-title">Create account</div>
+    <div class="auth-sub">Register as a normal user</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}" style="margin-bottom:1rem">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" required autofocus placeholder="choose_a_username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn-success" style="width:100%;margin-top:.5rem">Create Account</button>
+    </form>
+    <div class="auth-link">Already have an account? <a href="{{ url_for('login') }}">Login</a></div>
+  </div>
+</div>
+{% endblock %}

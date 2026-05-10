@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}Admin Panel — FlaskRBAC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Admin Panel</h1>
+  <a href="{{ url_for('admin_add_student') }}" class="btn btn-primary">+ Add Student</a>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-num" style="color:var(--accent)">{{ students|length }}</div>
+    <div class="stat-label">Total Students</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" style="color:#a78bfa">{{ users|length }}</div>
+    <div class="stat-label">Registered Users</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" style="color:var(--green)">
+      {{ users | selectattr('role','equalto','admin') | list | length }}
+    </div>
+    <div class="stat-label">Admins</div>
+  </div>
+</div>
+
+<!-- Students Table -->
+<div class="card">
+  <div class="card-title">Student Management</div>
+  {% if students %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Name</th><th>Email</th><th>Course</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+        <tr>
+          <td style="color:var(--muted)">{{ s.id }}</td>
+          <td><strong>{{ s.name }}</strong></td>
+          <td>{{ s.email }}</td>
+          <td>{{ s.course }}</td>
+          <td>
+            <div class="actions">
+              <a href="{{ url_for('admin_edit_student', id=s.id) }}" class="btn btn-warning btn-sm">Edit</a>
+              <a href="{{ url_for('admin_delete_student', id=s.id) }}"
+                 class="btn btn-danger btn-sm"
+                 onclick="return confirm('Delete {{ s.name }}?')">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p style="color:var(--muted);font-size:.875rem">No students yet. <a href="{{ url_for('admin_add_student') }}" style="color:var(--accent)">Add one →</a></p>
+  {% endif %}
+</div>
+
+<!-- Users Table -->
+<div class="card section-gap">
+  <div class="card-title">User Management</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Username</th><th>Role</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td style="color:var(--muted)">{{ u.id }}</td>
+          <td><strong>{{ u.username }}</strong></td>
+          <td>
+            <span class="badge {% if u.role == 'admin' %}badge-admin{% else %}badge-user{% endif %}">{{ u.role }}</span>
+          </td>
+          <td>
+            {% if u.id != session.user_id %}
+            <a href="{{ url_for('admin_delete_user', id=u.id) }}"
+               class="btn btn-danger btn-sm"
+               onclick="return confirm('Delete user {{ u.username }}?')">Delete</a>
+            {% else %}
+            <span style="color:var(--muted);font-size:.8rem">current user</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- API Reference -->
+<div class="card section-gap" style="border-color:rgba(79,124,255,.3)">
+  <div class="card-title">REST API Endpoints</div>
+  <div style="display:grid;gap:.5rem;font-size:.82rem;font-family:'Space Mono',monospace">
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <span style="background:rgba(34,197,94,.2);color:#86efac;padding:2px 8px;border-radius:4px;min-width:55px;text-align:center">GET</span>
+      <span style="color:var(--text)">/api/students</span>
+      <span style="color:var(--muted)">— list all</span>
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <span style="background:rgba(34,197,94,.2);color:#86efac;padding:2px 8px;border-radius:4px;min-width:55px;text-align:center">GET</span>
+      <span style="color:var(--text)">/api/students/&lt;id&gt;</span>
+      <span style="color:var(--muted)">— get one</span>
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <span style="background:rgba(79,124,255,.25);color:#93b4ff;padding:2px 8px;border-radius:4px;min-width:55px;text-align:center">POST</span>
+      <span style="color:var(--text)">/api/students</span>
+      <span style="color:var(--muted)">— add student</span>
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <span style="background:rgba(245,158,11,.2);color:#fcd34d;padding:2px 8px;border-radius:4px;min-width:55px;text-align:center">PUT</span>
+      <span style="color:var(--text)">/api/students/&lt;id&gt;</span>
+      <span style="color:var(--muted)">— update student</span>
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <span style="background:rgba(239,68,68,.2);color:#fca5a5;padding:2px 8px;border-radius:4px;min-width:55px;text-align:center">DELETE</span>
+      <span style="color:var(--text)">/api/students/&lt;id&gt;</span>
+      <span style="color:var(--muted)">— delete student</span>
+    </div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <span style="background:rgba(34,197,94,.2);color:#86efac;padding:2px 8px;border-radius:4px;min-width:55px;text-align:center">GET</span>
+      <span style="color:var(--text)">/api/users</span>
+      <span style="color:var(--muted)">— list users</span>
+    </div>
+  </div>
+</div>
+{% endblock %}

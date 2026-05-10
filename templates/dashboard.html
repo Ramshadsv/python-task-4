@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — FlaskRBAC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Student Records</h1>
+  <span class="badge badge-user">Read-Only View</span>
+</div>
+
+{% if students %}
+<div class="card">
+  <div class="card-title">All Students</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Name</th><th>Email</th><th>Course</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+        <tr>
+          <td style="color:var(--muted)">{{ s.id }}</td>
+          <td><strong>{{ s.name }}</strong></td>
+          <td>{{ s.email }}</td>
+          <td>{{ s.course }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;color:var(--muted)">
+  No student records found.<br>
+  {% if session.role == 'admin' %}
+    <a href="{{ url_for('admin_add_student') }}" class="btn btn-primary" style="margin-top:1rem">Add First Student</a>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="card section-gap" style="border-color:rgba(239,68,68,.25)">
+  <div class="card-title" style="color:var(--red)">Access Restriction</div>
+  <p style="font-size:.875rem;color:var(--muted)">As a regular user you can <strong style="color:var(--text)">view</strong> student records. Add, Edit, and Delete operations are restricted to <strong style="color:#a78bfa">Admin</strong> users only.</p>
+</div>
+{% endblock %}
